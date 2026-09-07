@@ -1,17 +1,24 @@
 #!/usr/bin/env python3
 """
-Finder face wallpaper, rebuilt with a "Pro" palette (black + chrome silver).
+Finder face wallpaper, redrawn from geometry in a choice of palettes.
 
 Same composition as "Mac OS Background 5120x2880.png": a hugely magnified
 Finder face cropped off the right edge of the frame.  Every edge in that
-artwork turned out to be either an exact circle or a straight line, so this
+artwork turned out to be either an exact ellipse or a straight line, so this
 script does not trace pixels -- it evaluates the geometry as a signed distance
 field.  That means genuinely clean, resolution independent, anti-aliased
 edges (the original was rendered with anti-aliasing off).
 
+Palettes:
+    pro             black stage, chrome silver features   (MacBook Pro)
+    pro-tangerine   backlit orange plastic, frosted white (iBook G3 Tangerine)
+    pro-lime        the same, in muted Lime
+    tangerine       the original's four flat tints, hue rotated to Tangerine
+    lime            the same, in muted Lime
+
 Only numpy is required; the PNG is written directly with zlib.
 
-    python3 finder_pro_wallpaper.py [--size WxH] [--out FILE]
+    python3 finder_wallpaper.py [--palette NAME] [--size WxH] [--out FILE]
 """
 
 import argparse
@@ -56,43 +63,131 @@ IN_MOUTH_R   = (4000.0, 1900.0)
 IN_FACE      = (4000.0,  200.0)
 
 # --------------------------------------------------------------------------
-# "Pro" palette: black stage, chrome features, glossy graphite panel.
+# Palettes.  Four slots each: the stage, the soft pool of light behind the
+# face, the panel (right half of the face) and the two feature ramps -- "near"
+# for the right half's features, "far" for the left half's, which the original
+# keeps deliberately low contrast.
 # --------------------------------------------------------------------------
-BG_BASE  = (0x00, 0x00, 0x00)
-BG_GLOW  = (0x18, 0x19, 0x1e)      # soft pool of light behind the face
-GLOW_C   = (3150.0, 1350.0)        # glow centre, reference coords
-GLOW_R   = 3500.0
+GLOW_C = (3150.0, 1350.0)          # glow centre, reference coords
 
-# Graphite panel = the right half of the face.  Top-lit, falling to black.
-PANEL_STOPS = [
-    (0.00, (0x3c, 0x3e, 0x44)),
-    (0.28, (0x25, 0x27, 0x2c)),
-    (0.62, (0x14, 0x15, 0x18)),
-    (1.00, (0x08, 0x08, 0x0a)),
-]
 
-# Chrome = the features of the right (near) half of the face.
-CHROME_STOPS = [
-    (0.00, (0xff, 0xff, 0xff)),
-    (0.12, (0xf1, 0xf3, 0xf6)),
-    (0.32, (0xb4, 0xb8, 0xc0)),
-    (0.47, (0x74, 0x78, 0x80)),
-    (0.58, (0x63, 0x66, 0x6d)),
-    (0.74, (0xa2, 0xa6, 0xad)),
-    (0.89, (0xd8, 0xdb, 0xe1)),
-    (1.00, (0xef, 0xf1, 0xf5)),
-]
+def flat(stage, panel, near, far):
+    """A palette in the original's own style: four solid tints, nothing else.
 
-# Graphite = the features of the left (far) half of the face: same sweep,
-# dimmed the way the original keeps the far half low contrast.
-GHOST_STOPS = [
-    (0.00, (0x50, 0x52, 0x58)),
-    (0.35, (0x35, 0x37, 0x3c)),
-    (0.60, (0x26, 0x27, 0x2b)),
-    (1.00, (0x3a, 0x3c, 0x41)),
-]
+    Dithering is off, so the output stays a handful of exact colours and
+    compresses to a few hundred KB the way the original does.
+    """
+    return {'base': stage, 'glow': stage, 'glow_r': 1.0, 'dither': False,
+            'panel': [(0.0, panel)], 'near': [(0.0, near)], 'far': [(0.0, far)]}
 
-# Direction of the metal sweep: 60 degrees, down and to the right.
+
+PALETTES = {
+    # Black stage, glossy graphite panel, chrome features.
+    'pro': {
+        'base': (0x00, 0x00, 0x00),
+        'glow': (0x18, 0x19, 0x1e),
+        'glow_r': 3500.0,
+        'panel': [
+            (0.00, (0x3c, 0x3e, 0x44)),
+            (0.28, (0x25, 0x27, 0x2c)),
+            (0.62, (0x14, 0x15, 0x18)),
+            (1.00, (0x08, 0x08, 0x0a)),
+        ],
+        'near': [
+            (0.00, (0xff, 0xff, 0xff)),
+            (0.12, (0xf1, 0xf3, 0xf6)),
+            (0.32, (0xb4, 0xb8, 0xc0)),
+            (0.47, (0x74, 0x78, 0x80)),
+            (0.58, (0x63, 0x66, 0x6d)),
+            (0.74, (0xa2, 0xa6, 0xad)),
+            (0.89, (0xd8, 0xdb, 0xe1)),
+            (1.00, (0xef, 0xf1, 0xf5)),
+        ],
+        'far': [
+            (0.00, (0x50, 0x52, 0x58)),
+            (0.35, (0x35, 0x37, 0x3c)),
+            (0.60, (0x26, 0x27, 0x2b)),
+            (1.00, (0x3a, 0x3c, 0x41)),
+        ],
+    },
+    # iBook G3 Tangerine, dramatised: translucent orange shell lit from within,
+    # frosted white accents.  Panel colours are sampled off the lid of a real
+    # one -- #d27006 the body, #e8991c the lit top edge, #be411a the base.
+    'pro-tangerine': {
+        'base': (0x0e, 0x04, 0x01),
+        'glow': (0x5e, 0x14, 0x01),
+        'glow_r': 3050.0,
+        'panel': [
+            (0.00, (0xe0, 0x8c, 0x14)),
+            (0.30, (0xc4, 0x63, 0x06)),
+            (0.65, (0x82, 0x31, 0x06)),
+            (1.00, (0x36, 0x10, 0x03)),
+        ],
+        'near': [
+            (0.00, (0xff, 0xff, 0xff)),
+            (0.12, (0xff, 0xf5, 0xe6)),
+            (0.32, (0xff, 0xd9, 0xa8)),
+            (0.47, (0xf5, 0xac, 0x55)),
+            (0.58, (0xea, 0x95, 0x34)),
+            (0.74, (0xfd, 0xd2, 0x9c)),
+            (0.89, (0xff, 0xee, 0xda)),
+            (1.00, (0xff, 0xfa, 0xf2)),
+        ],
+        'far': [
+            (0.00, (0x8a, 0x3b, 0x0e)),
+            (0.35, (0x62, 0x27, 0x08)),
+            (0.60, (0x48, 0x1a, 0x05)),
+            (1.00, (0x74, 0x30, 0x0b)),
+        ],
+    },
+    # iMac/iBook Lime, same backlit treatment as pro-tangerine.  Hue and
+    # saturation come off the old "Lime Sharp" desktop picture (core #36c32b,
+    # hue ~115) pulled a third of the way down in saturation and a little
+    # yellower, which is where lime stops looking neon.
+    'pro-lime': {
+        'base': (0x05, 0x0c, 0x03),
+        'glow': (0x1f, 0x4e, 0x11),
+        'glow_r': 3050.0,
+        'panel': [
+            (0.00, (0x5d, 0xc7, 0x3c)),
+            (0.30, (0x49, 0xb0, 0x29)),
+            (0.65, (0x33, 0x79, 0x1e)),
+            (1.00, (0x19, 0x39, 0x0f)),
+        ],
+        'near': [
+            (0.00, (0xff, 0xff, 0xff)),
+            (0.12, (0xee, 0xfb, 0xea)),
+            (0.32, (0xc4, 0xf0, 0xb7)),
+            (0.47, (0x89, 0xda, 0x70)),
+            (0.58, (0x6f, 0xcb, 0x53)),
+            (0.74, (0xbb, 0xed, 0xac)),
+            (0.89, (0xe6, 0xf9, 0xe0)),
+            (1.00, (0xf6, 0xfd, 0xf4)),
+        ],
+        'far': [
+            (0.00, (0x36, 0x75, 0x23)),
+            (0.35, (0x25, 0x53, 0x17)),
+            (0.60, (0x1b, 0x3d, 0x10)),
+            (1.00, (0x2d, 0x62, 0x1d)),
+        ],
+    },
+    # The original desktop picture's own recipe -- four flat tints, no
+    # gradient, no glow -- with its blues rotated to the Tangerine hue.  The
+    # gaps between the four tints are widened 2.2x from the original's, which
+    # at this lightness is what keeps the divider and the two halves legible.
+    'tangerine': flat((0xff, 0xc1, 0x82),    # stage
+                      (0xff, 0xdb, 0xb7),    # face panel
+                      (0xff, 0x9d, 0x3b),    # near half features
+                      (0xff, 0xac, 0x59)),   # far half features
+    # Same flat treatment in Lime.  Green carries more luminance than orange,
+    # so this one sits at about half saturation to stay muted.
+    'lime': flat((0xa1, 0xe3, 0x96),
+                 (0xc6, 0xee, 0xc0),
+                 (0x6e, 0xd4, 0x5e),
+                 (0x83, 0xda, 0x75)),
+}
+
+# Direction of the gradient sweep across the features: 60 degrees, down right.
 SWEEP_DIR = (0.5, math.sqrt(3.0) / 2.0)
 SWEEP_MIN, SWEEP_MAX = 1000.0, 4700.0
 
@@ -191,12 +286,12 @@ def sweep(X, Y):
     return t / (SWEEP_MAX - SWEEP_MIN)
 
 
-def background(X, Y):
-    d = np.hypot(X - GLOW_C[0], Y - GLOW_C[1]) / GLOW_R
+def background(X, Y, pal):
+    d = np.hypot(X - GLOW_C[0], Y - GLOW_C[1]) / pal['glow_r']
     k = np.clip(1.0 - d, 0.0, 1.0)
     k = k * k * k * (k * (k * 6.0 - 15.0) + 10.0)   # smootherstep falloff
-    base = np.array(BG_BASE, dtype=np.float64)
-    glow = np.array(BG_GLOW, dtype=np.float64)
+    base = np.array(pal['base'], dtype=np.float64)
+    glow = np.array(pal['glow'], dtype=np.float64)
     return base + (glow - base) * k[..., None]
 
 
@@ -207,7 +302,7 @@ def over(dst, colour, sd, px):
 
 
 # --------------------------------------------------------------------------
-def render(width, height, block=192):
+def render(width, height, pal, block=192):
     out = np.empty((height, width, 3), dtype=np.uint8)
     sx, sy = REF_W / width, REF_H / height
     px = max(sx, sy)                       # one output pixel, in ref units
@@ -219,19 +314,20 @@ def render(width, height, block=192):
         ys = (np.arange(y0, y1) + 0.5) * sy
         X, Y = np.meshgrid(xs, ys)
 
-        img = background(X, Y)
-        img = over(img, ramp(Y / REF_H, PANEL_STOPS), face_panel(X, Y), px)
+        img = background(X, Y, pal)
+        img = over(img, ramp(Y / REF_H, pal['panel']), face_panel(X, Y), px)
 
         t = sweep(X, Y)
-        ghost = either(mouth_far(X, Y), bar(X, Y, EYE_L))
-        img = over(img, ramp(t, GHOST_STOPS), ghost, px)
+        far = either(mouth_far(X, Y), bar(X, Y, EYE_L))
+        img = over(img, ramp(t, pal['far']), far, px)
 
-        chrome = either(divider(X, Y), mouth_near(X, Y), bar(X, Y, EYE_R))
-        img = over(img, ramp(t, CHROME_STOPS), chrome, px)
+        near = either(divider(X, Y), mouth_near(X, Y), bar(X, Y, EYE_R))
+        img = over(img, ramp(t, pal['near']), near, px)
 
-        # Triangular dither: these gradients are shallow enough that plain
-        # 8-bit rounding leaves contour rings.
-        img += rng.triangular(-1.0, 0.0, 1.0, img.shape)
+        # Triangular dither: gradients this shallow leave contour rings under
+        # plain 8-bit rounding.  Flat palettes skip it and stay exact.
+        if pal.get('dither', True):
+            img += rng.triangular(-1.0, 0.0, 1.0, img.shape)
         out[y0:y1] = np.clip(img + 0.5, 0, 255).astype(np.uint8)
     return out
 
@@ -255,12 +351,15 @@ def write_png(path, rgb):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument('--palette', default='pro', choices=sorted(PALETTES))
     ap.add_argument('--size', default='5120x2880')
-    ap.add_argument('--out', default='Mac OS Background Pro 5120x2880.png')
+    ap.add_argument('--out', default=None)
     args = ap.parse_args()
     w, h = (int(v) for v in args.size.lower().split('x'))
-    write_png(args.out, render(w, h))
-    print('wrote %s (%dx%d)' % (args.out, w, h))
+    out = args.out or 'Mac OS Background %s %dx%d.png' % (
+        args.palette.replace('-', ' ').title(), w, h)
+    write_png(out, render(w, h, PALETTES[args.palette]))
+    print('wrote %s (%dx%d)' % (out, w, h))
 
 
 if __name__ == '__main__':
