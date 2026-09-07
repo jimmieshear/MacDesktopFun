@@ -84,9 +84,9 @@ def flat(stage, panel, near, far):
 PALETTES = {
     # Black stage, glossy graphite panel, chrome features.
     'pro': {
-        'base': (0x00, 0x00, 0x00),
-        'glow': (0x18, 0x19, 0x1e),
-        'glow_r': 3500.0,
+        'base': (0x0e, 0x0e, 0x0e),
+        'glow': (0x23, 0x25, 0x2c),
+        'glow_r': 5200.0,
         'panel': [
             (0.00, (0x3c, 0x3e, 0x44)),
             (0.28, (0x25, 0x27, 0x2c)),
@@ -104,19 +104,19 @@ PALETTES = {
             (1.00, (0xef, 0xf1, 0xf5)),
         ],
         'far': [
-            (0.00, (0x50, 0x52, 0x58)),
-            (0.35, (0x35, 0x37, 0x3c)),
-            (0.60, (0x26, 0x27, 0x2b)),
-            (1.00, (0x3a, 0x3c, 0x41)),
+            (0.00, (0x70, 0x72, 0x7b)),
+            (0.35, (0x54, 0x57, 0x5f)),
+            (0.60, (0x45, 0x47, 0x4e)),
+            (1.00, (0x59, 0x5c, 0x64)),
         ],
     },
     # iBook G3 Tangerine, dramatised: translucent orange shell lit from within,
     # frosted white accents.  Panel colours are sampled off the lid of a real
     # one -- #d27006 the body, #e8991c the lit top edge, #be411a the base.
     'pro-tangerine': {
-        'base': (0x0e, 0x04, 0x01),
-        'glow': (0x5e, 0x14, 0x01),
-        'glow_r': 3050.0,
+        'base': (0x1f, 0x11, 0x0c),
+        'glow': (0x68, 0x22, 0x10),
+        'glow_r': 5200.0,
         'panel': [
             (0.00, (0xe0, 0x8c, 0x14)),
             (0.30, (0xc4, 0x63, 0x06)),
@@ -134,10 +134,10 @@ PALETTES = {
             (1.00, (0xff, 0xfa, 0xf2)),
         ],
         'far': [
-            (0.00, (0x8a, 0x3b, 0x0e)),
-            (0.35, (0x62, 0x27, 0x08)),
-            (0.60, (0x48, 0x1a, 0x05)),
-            (1.00, (0x74, 0x30, 0x0b)),
+            (0.00, (0xc6, 0x55, 0x14)),
+            (0.35, (0x9f, 0x3f, 0x0d)),
+            (0.60, (0x86, 0x30, 0x09)),
+            (1.00, (0xb1, 0x49, 0x11)),
         ],
     },
     # iMac/iBook Lime, same backlit treatment as pro-tangerine.  Hue and
@@ -145,9 +145,9 @@ PALETTES = {
     # hue ~115) pulled a third of the way down in saturation and a little
     # yellower, which is where lime stops looking neon.
     'pro-lime': {
-        'base': (0x05, 0x0c, 0x03),
-        'glow': (0x1f, 0x4e, 0x11),
-        'glow_r': 3050.0,
+        'base': (0x12, 0x1c, 0x0f),
+        'glow': (0x2d, 0x59, 0x1f),
+        'glow_r': 5200.0,
         'panel': [
             (0.00, (0x5d, 0xc7, 0x3c)),
             (0.30, (0x49, 0xb0, 0x29)),
@@ -165,10 +165,10 @@ PALETTES = {
             (1.00, (0xf6, 0xfd, 0xf4)),
         ],
         'far': [
-            (0.00, (0x36, 0x75, 0x23)),
-            (0.35, (0x25, 0x53, 0x17)),
-            (0.60, (0x1b, 0x3d, 0x10)),
-            (1.00, (0x2d, 0x62, 0x1d)),
+            (0.00, (0x4e, 0xa8, 0x32)),
+            (0.35, (0x3c, 0x87, 0x25)),
+            (0.60, (0x32, 0x72, 0x1e)),
+            (1.00, (0x44, 0x95, 0x2c)),
         ],
     },
     # The original desktop picture's own recipe -- four flat tints, no
