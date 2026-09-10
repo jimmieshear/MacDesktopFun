@@ -13,8 +13,10 @@ Palettes:
     pro             black stage, chrome silver features   (MacBook Pro)
     pro-tangerine   backlit orange plastic, frosted white (iBook G3 Tangerine)
     pro-lime        the same, in muted Lime
+    pro-strawberry  the same, in iMac G3 Strawberry
     tangerine       the original's four flat tints, hue rotated to Tangerine
     lime            the same, in muted Lime
+    strawberry      the same, in Strawberry
 
 Only numpy is required; the PNG is written directly with zlib.
 
@@ -171,6 +173,37 @@ PALETTES = {
             (1.00, (0x44, 0x95, 0x2c)),
         ],
     },
+    # iMac G3 Strawberry, same backlit treatment.  Hue comes off a photo of a
+    # real Strawberry tray -- the lit core reads #f62960, the shadowed shell
+    # #5d162a, both sitting at hue ~344, i.e. red already leaning pink.  Held
+    # a touch below the photo's saturation so it stays plastic, not neon.
+    'pro-strawberry': {
+        'base': (0x24, 0x0e, 0x15),
+        'glow': (0x70, 0x10, 0x30),
+        'glow_r': 5200.0,
+        'panel': [
+            (0.00, (0xf6, 0x28, 0x56)),
+            (0.30, (0xd8, 0x17, 0x4c)),
+            (0.65, (0x8f, 0x12, 0x3d)),
+            (1.00, (0x3b, 0x08, 0x1c)),
+        ],
+        'near': [
+            (0.00, (0xff, 0xff, 0xff)),
+            (0.12, (0xff, 0xe8, 0xed)),
+            (0.32, (0xff, 0xaf, 0xc2)),
+            (0.47, (0xf5, 0x62, 0x86)),
+            (0.58, (0xea, 0x43, 0x6c)),
+            (0.74, (0xfd, 0xa4, 0xb9)),
+            (0.89, (0xff, 0xdd, 0xe5)),
+            (1.00, (0xff, 0xf3, 0xf6)),
+        ],
+        'far': [
+            (0.00, (0xd6, 0x25, 0x60)),
+            (0.35, (0xac, 0x1b, 0x4d)),
+            (0.60, (0x91, 0x15, 0x41)),
+            (1.00, (0xbf, 0x20, 0x57)),
+        ],
+    },
     # The original desktop picture's own recipe -- four flat tints, no
     # gradient, no glow -- with its blues rotated to the Tangerine hue.  The
     # gaps between the four tints are widened 2.2x from the original's, which
@@ -185,6 +218,12 @@ PALETTES = {
                  (0xc6, 0xee, 0xc0),
                  (0x6e, 0xd4, 0x5e),
                  (0x83, 0xda, 0x75)),
+    # Strawberry, flat.  Same spacing between the four tints as Tangerine,
+    # rotated to hue 344; red pales toward pink rather than toward peach.
+    'strawberry': flat((0xff, 0x8c, 0xaa),
+                       (0xff, 0xbd, 0xce),
+                       (0xff, 0x4b, 0x7b),
+                       (0xff, 0x66, 0x8f)),
 }
 
 # Direction of the gradient sweep across the features: 60 degrees, down right.
