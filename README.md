@@ -15,9 +15,11 @@ in different palettes.
 | `Mac OS Background Pro Tangerine 5120x2880.png` | Script output: backlit orange plastic + frosted white, iBook G3 Tangerine palette. |
 | `Mac OS Background Pro Lime 5120x2880.png` | Script output: same treatment in muted Lime. |
 | `Mac OS Background Pro Strawberry 5120x2880.png` | Script output: same treatment in iMac G3 Strawberry. |
+| `Mac OS Background Pro Grape 5120x2880.png` | Script output: same treatment in iMac G3 Grape. |
 | `Mac OS Background Tangerine 5120x2880.png` | Script output: the original's flat, soft look in Tangerine. |
 | `Mac OS Background Lime 5120x2880.png` | Script output: the original's flat, soft look in muted Lime. |
 | `Mac OS Background Strawberry 5120x2880.png` | Script output: the original's flat, soft look in Strawberry. |
+| `Mac OS Background Grape 5120x2880.png` | Script output: the original's flat, soft look in Grape. |
 
 ## How the script works
 
@@ -53,9 +55,11 @@ python3 finder_wallpaper.py                                    # pro, 5120x2880,
 python3 finder_wallpaper.py --palette pro-tangerine
 python3 finder_wallpaper.py --palette pro-lime
 python3 finder_wallpaper.py --palette pro-strawberry
+python3 finder_wallpaper.py --palette pro-grape
 python3 finder_wallpaper.py --palette tangerine                # flat, ~3s
 python3 finder_wallpaper.py --palette lime
 python3 finder_wallpaper.py --palette strawberry
+python3 finder_wallpaper.py --palette grape
 python3 finder_wallpaper.py --palette pro --size 3840x2160 --out 4k.png
 ```
 

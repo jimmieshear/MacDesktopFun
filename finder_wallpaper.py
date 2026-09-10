@@ -14,9 +14,11 @@ Palettes:
     pro-tangerine   backlit orange plastic, frosted white (iBook G3 Tangerine)
     pro-lime        the same, in muted Lime
     pro-strawberry  the same, in iMac G3 Strawberry
+    pro-grape       the same, in iMac G3 Grape
     tangerine       the original's four flat tints, hue rotated to Tangerine
     lime            the same, in muted Lime
     strawberry      the same, in Strawberry
+    grape           the same, in Grape
 
 Only numpy is required; the PNG is written directly with zlib.
 
@@ -204,6 +206,40 @@ PALETTES = {
             (1.00, (0xbf, 0x20, 0x57)),
         ],
     },
+    # iMac G3 Grape, same backlit treatment.  The real shell is the darkest of
+    # the five -- a photo of one reads #61009e at its lit crest and #190032 in
+    # shadow, hue ~275 at full saturation.  Violet carries the least luminance
+    # of any hue, so this is the one palette lifted in value rather than pulled
+    # down: the panel opens brighter than the plastic ever does, which is what
+    # keeps the face from going to mud.  Saturation comes off ~15% in exchange,
+    # or the lit half turns neon.
+    'pro-grape': {
+        'base': (0x1a, 0x0b, 0x26),
+        'glow': (0x46, 0x06, 0x70),
+        'glow_r': 5200.0,
+        'panel': [
+            (0.00, (0x91, 0x2c, 0xca)),
+            (0.30, (0x75, 0x1d, 0xb0)),
+            (0.65, (0x47, 0x15, 0x75)),
+            (1.00, (0x1c, 0x09, 0x31)),
+        ],
+        'near': [
+            (0.00, (0xff, 0xff, 0xff)),
+            (0.12, (0xf8, 0xeb, 0xff)),
+            (0.32, (0xe5, 0xb9, 0xff)),
+            (0.47, (0xc5, 0x75, 0xf5)),
+            (0.58, (0xb2, 0x58, 0xea)),
+            (0.74, (0xe0, 0xaf, 0xfd)),
+            (0.89, (0xf4, 0xe1, 0xff)),
+            (1.00, (0xfb, 0xf5, 0xff)),
+        ],
+        'far': [
+            (0.00, (0x6d, 0x27, 0xaa)),
+            (0.35, (0x55, 0x1d, 0x89)),
+            (0.60, (0x46, 0x17, 0x73)),
+            (1.00, (0x60, 0x22, 0x98)),
+        ],
+    },
     # The original desktop picture's own recipe -- four flat tints, no
     # gradient, no glow -- with its blues rotated to the Tangerine hue.  The
     # gaps between the four tints are widened 2.2x from the original's, which
@@ -224,6 +260,12 @@ PALETTES = {
                        (0xff, 0xbd, 0xce),
                        (0xff, 0x4b, 0x7b),
                        (0xff, 0x66, 0x8f)),
+    # Grape, flat.  Hue 276, saturation a shade under the others' -- violet
+    # this pale reads as lavender, and any more of it starts to buzz.
+    'grape': flat((0xd8, 0x9e, 0xff),
+                  (0xe9, 0xc7, 0xff),
+                  (0xc2, 0x66, 0xff),
+                  (0xcb, 0x7e, 0xff)),
 }
 
 # Direction of the gradient sweep across the features: 60 degrees, down right.
