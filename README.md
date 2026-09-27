@@ -20,6 +20,9 @@ in different palettes.
 | `Mac OS Background Lime 5120x2880.png` | Script output: the original's flat, soft look in muted Lime. |
 | `Mac OS Background Strawberry 5120x2880.png` | Script output: the original's flat, soft look in Strawberry. |
 | `Mac OS Background Grape 5120x2880.png` | Script output: the original's flat, soft look in Grape. |
+| `macintosh_wallpaper.py` | Generates the portrait Macintosh line-art wallpapers. |
+| `Macintosh Background <Palette> 2880x5120.png` | Its output, one per palette above (Pro, Pro Tangerine/Lime/Strawberry/Grape, Tangerine/Lime/Strawberry/Grape). |
+| `Macintosh Background Classic 2880x5120.png` | One-off: the icon's own colors on black, outline turned white, half size. |
 
 ## How the script works
 
@@ -79,3 +82,32 @@ It isn't one logo, it's two half-faces. The near (right) half is drawn about 6.5
 larger than the far (left) half — that's why the mouth is 143 px thick on the right
 and 134 px on the left, and why the two mouth arcs are different curves. They meet
 hidden underneath the center divider, which is drawn last and covers the seam.
+
+## Macintosh (portrait)
+
+`macintosh_wallpaper.py` makes a second picture for a Studio Display rotated 90°
+(2880×5120): the pixel-art Macintosh icon — Mac, keyboard, cable, mouse and apple —
+as lines alone, centred in the frame with the glow pooled behind it.
+
+The icon is stored as a character grid at the top of the script, sampled cell by
+cell off a screenshot, so only the line art made it in (no carousel arrows, no
+watermark). It reuses every palette in `finder_wallpaper.py`, with the Finder face's
+two strengths of line: the Mac, apple and mouse paint in the bright `near` ramp,
+white in the Pro palettes, and the cable in the low-contrast `far` tint. The cable
+turns bright where it plugs into the Mac, like the Finder's mouth crossing the
+divider.
+
+```sh
+python3 macintosh_wallpaper.py --palette pro-grape   # ~20s
+python3 macintosh_wallpaper.py --palette grape       # flat
+```
+
+Output is `Macintosh Background <Palette> 2880x5120.png`. `FRAME_W` sets the zoom
+(frame width in cells), `CENTRE` the point of the art that lands mid-frame, and `MAC`
+the per-row cell spans of the Mac, inside which the cable turns near. `CABLE_LIFT`
+sets how far the cable is lifted from the `far` tint toward `near`.
+
+`--palette classic` is a one-off that lives only in this script: the icon's own flat
+colors on black, with its black outline turned white, at half the size of the others
+(`frame_w` in the `CLASSIC` dict). The tints are the screenshot's raw pixel values,
+since converting them out of the display profile to sRGB clips them to neon.
